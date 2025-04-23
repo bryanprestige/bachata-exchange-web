@@ -3,6 +3,7 @@ import { Link,Routes,Route } from 'react-router-dom'
 import HomePage from './components/HomePage.jsx'
 import AboutPage from './components/AboutPage.jsx'
 import EventsPage from './components/EventsPage.jsx'
+import JoinPage from './components/JoinPage.jsx'
 import beLogo from './assets/bachata-exchange-logo.png'
 import { useState,useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,7 +12,6 @@ function App() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
@@ -34,7 +34,7 @@ function App() {
           <div className="hidden md:flex gap-8 text-lg font-medium">
             <Link to="/" className="hover:text-white transition">Home</Link>
             <Link to="/about" className="hover:text-white transition">About</Link>
-            <Link to="/events" className="hover:text-white transition">Events</Link>
+            <Link to="/events" className="hover:text-white transition mr-10">Events</Link>
           </div>
 
           {/* Mobile menu toggle */}
@@ -69,6 +69,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/events" element={<EventsPage />} />
+        <Route path="/join" element={<JoinPage />} />
       </Routes>
     </>
   )

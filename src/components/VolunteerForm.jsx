@@ -17,6 +17,7 @@ export default function VolunteerForm() {
     const newErrors = {};
     if (!formData.name) newErrors.name = 'Required';
     if (!formData.email) newErrors.email = 'Required';
+    if (!formData.phoneNumber) newErrors.phoneNumber = 'To be added to the whatsapp group'
     if (!formData.message) newErrors.message = 'Please tell us why you want to help';
     if (!formData.acceptedTerms) newErrors.acceptedTerms = 'You must accept the terms';
     return newErrors;
@@ -36,7 +37,8 @@ export default function VolunteerForm() {
         setFormData({
           name: '',
           email: '',
-          reasons: '',
+          phoneNumber: '',
+          message: '',
           acceptedTerms: false,
         });
         formRef.current.reset();
@@ -72,9 +74,17 @@ export default function VolunteerForm() {
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         />
         {errors.email && <span className="text-red-400 text-sm">{errors.email}</span>}
-
+        <input
+        name="phoneNumber"
+        type='tel'
+        placeholder='Phone Number with prefix'
+        className="@apply p-3 rounded bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+        value={formData.phoneNumber}
+        onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+        ></input>
         <textarea
-          placeholder="Why do you want to volunteer?"
+          name="message"
+          placeholder="Why do you want to volunteer? Any skills that could help BE?"
           className="@apply p-3 rounded bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
           value={formData.message}
           onChange={(e) => setFormData({ ...formData, message: e.target.value })}

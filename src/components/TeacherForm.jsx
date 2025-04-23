@@ -9,6 +9,7 @@ export default function TeacherForm() {
     email: '',
     experience: '',
     level: '',
+    socialMedia: '',
     customTopic: '',
     image: null,
     acceptedTerms: false,
@@ -42,6 +43,7 @@ export default function TeacherForm() {
           email: '',
           experience: '',
           level: '',
+          socialMedia: '',
           customTopic: '',
           image: null,
           acceptedTerms: false,
@@ -79,7 +81,15 @@ export default function TeacherForm() {
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
         />
         {errors.email && <span className="text-red-400 text-sm">{errors.email}</span>}
-
+        <input
+          name="socialMedia"
+          type="text"
+          placeholder="Social Media (optional)"
+          className="@apply p-3 rounded bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          value={formData.socialMedia}
+          onChange={(e) => setFormData({ ...formData, socialMedia: e.target.value })}
+        ></input>
+        
         <input
           name="experience"
           type="number"
@@ -89,14 +99,13 @@ export default function TeacherForm() {
           onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
         />
         {errors.experience && <span className="text-red-400 text-sm">{errors.experience}</span>}
-
         <select
           name="level"
           className="@apply p-3 rounded bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
           value={formData.level}
           onChange={(e) => setFormData({ ...formData, level: e.target.value })}
         >
-          <option value="">Select Preferred Level</option>
+          <option value="" disabled>Select Preferred Level</option>
           <option value="beginner">Beginner</option>
           <option value="improver">Improver</option>
           <option value="intermediate">Intermediate</option>

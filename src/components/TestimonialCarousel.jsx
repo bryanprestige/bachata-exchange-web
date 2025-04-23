@@ -2,7 +2,7 @@ import { useKeenSlider } from "keen-slider/react";
 import Testimonial from "./Testimonial.jsx";
 import { KeenAutoplayWithDots } from "../lib/keenAutoplayWithDots.js";
 import { useState, useRef } from "react";
-
+import { FaTripadvisor } from "react-icons/fa";
 export default function TestimonialCarousel() {
 
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -101,6 +101,16 @@ export default function TestimonialCarousel() {
                     ></button>
                   ))}
                 </div>
+                <p className="mt-4 text-lg md:text-2xl text-gray-800">
+                  Would you like to see what other people say?</p>
+                <p className="mt-4 text-lg md:text-2xl text-gray-800">
+                  Would you like to leave a review?
+                  You can do it 
+                  <a href="https://www.tripadvisor.es/Attraction_Review-g186338-d26663269-Reviews-Bachata_Exchange-London_England.html" target="_blank" className="text-green-400 ml-1">
+                  here 
+                  <FaTripadvisor className="inline ml-2 text-green-400"/>
+                  </a>  
+                </p>
               </>
             )}
 

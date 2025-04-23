@@ -6,7 +6,7 @@ import TestimonialCarousel from './TestimonialCarousel';
 import Sponsors from './sponsors';
 import EventFacts from './EventFacts';
 import Footer from './Footer';
-
+import ScrollToTopButton from './ScrollToTopButton';
 export default function HomePage() {
     return (
       <main className='bg-gray-800'>
@@ -35,6 +35,7 @@ export default function HomePage() {
       <Sponsors></Sponsors>
       {/* Footer */}
       <Footer></Footer>
+      <ScrollToTopButton></ScrollToTopButton>
     </main>
     )
 }

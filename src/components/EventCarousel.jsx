@@ -55,7 +55,7 @@ export default function EventCarousel() {
         {loaded && instanceRef.current && (
           <>
             {/* Flechas */}
-            <button
+            {/* <button
               onClick={() => instanceRef.current?.prev()}
               className="absolute left-2 top-1/2 -translate-y-1/2 bg-white text-black rounded-full p-2 hover:bg-purple-200 transition"
             >
@@ -63,10 +63,10 @@ export default function EventCarousel() {
             </button>
             <button
               onClick={() => instanceRef.current?.next()}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-white text-black rounded-full p-2 hover:bg-purple-200 transition"
+              className="absolute right-1 top-1/2 -translate-y-1/2 bg-white text-black rounded-full p-2 hover:bg-purple-200 transition"
             >
               →
-            </button>
+            </button> */}
             {/* Dots */}
             <div className="flex justify-center mt-6 gap-2">
               {events.map((_, i) => (

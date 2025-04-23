@@ -13,7 +13,7 @@ export default function HeroSection() {
                 <h1 className="text-4xl md:text-6xl font-bold text-yellow-500">Bachata Exchange</h1>
                 <p className="mt-4 text-lg md:text-2xl text-white">More than dance, a community.</p>
                 <Link to="/events">
-                <button className="mt-6 px-6 py-3 bg-white hover:bg-blue-50 text-gray-800 font-semibold rounded-xl transition">
+                <button className="mt-6 px-6 py-3 bg-white hover:bg-yellow-100 text-gray-800 font-semibold rounded-xl transition">
                     View Upcoming Events
                 </button>
                 </Link>

@@ -76,7 +76,7 @@ export default function TestimonialCarousel() {
           {loaded && instanceRef.current && (
               <>
                 {/* Flechas */}
-                <button
+                {/* <button
                   onClick={() => instanceRef.current?.prev()}
                   className="absolute left-2 top-1/2 -translate-y-1/2 bg-white text-black rounded-full p-2 hover:bg-purple-200 transition"
                 >
@@ -87,7 +87,7 @@ export default function TestimonialCarousel() {
                   className="absolute right-2 top-1/2 -translate-y-1/2 bg-white text-black rounded-full p-2 hover:bg-purple-200 transition"
                 >
                   →
-                </button>
+                </button> */}
 
                 {/* Dots */}
                 <div className="flex justify-center mt-6 gap-2">

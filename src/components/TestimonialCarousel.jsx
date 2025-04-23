@@ -30,25 +30,40 @@ export default function TestimonialCarousel() {
   
   const testimonials = [
     {
-      quote: "Bachata Exchange made me feel at home from the first song. The vibe is unreal!",
-      name: "Elena G.",
-      avatar: "/avatars/elena.jpg",
+      quote: "Simply the best place to dance bachata in London! And the best place to be on Sunday evening. It gets better and better every time and I learnt so much there as well with free lessons that are run before the social dancing.",
+      name: "Dominika K",
+      avatar: "https://i.pravatar.cc/150?img=1",
     },
     {
-      quote: "The most inclusive and welcoming dance event I’ve ever attended.",
-      name: "Marcus V.",
-      avatar: "/avatars/marcus.jpg",
+      quote: "I love BE, it is my favourite place to dance, even I enjoyed it more here than when I dance in Spain, my country. It is always full of people with a good energy, even if you are a beginner, you would have fun. After last year, I was in such a hype to come back last Sunday and it was amazing, BE never let you down. It is like that special place that when you are there all your problems disappeare and you are able to see life differently. Love it here!! :) thank you to the organisers to make it happen, winter felt really long without BE.",
+      name: "Agustin V",
+      avatar: "https://i.pravatar.cc/150?img=7",
     },
     {
-      quote: "I met friends for life here. It’s more than just a party.",
-      name: "Sophia D.",
-      avatar: "/avatars/sophia.jpg",
+      quote: "I'm so glad this Is back!! By far my favorite night of dancing in London, doesn't go late, incredibly accessible off Liverpool Street Station, and the music, community, and vibe are always quality. It's like having a dance festival happen every weekend, and they play all types of bachata. The teachers they bring in are exceptional as well, and accommodate for multiple skill levels. Cannot recommend this spot enough, if you're a bachata dancer, This spot is a must",
+      name: "Zach",
+      avatar: "https://i.pravatar.cc/150?img=3",
+    },
+    {
+      quote:"Great vibes! Bachat teachers are super friendly and helpful and they do it virtually for free (or for a small discretional donation) and then the social dancing brings all levels together to have fun! I try to go Sunday. 5pm onwards is Bachata time!",
+      name: "Chiara C",
+      avatar: "https://i.pravatar.cc/150?img=5",
+    },
+    {
+      quote: "There is no other place that gives you the community feeling like Bachata Exchange.The energy that you feel there is like no other.Dancing on an open space is magic, it's way more relax than been on a disco, you can seem people better, it allows you to chat, it allow you to connect with people in ways that you can't in most places.This is a must try at least once if you came or live in London, I'm sure you will be surprise about it. If you are a complete beginner or an advance dancer, you will find many friendly people that you will enjoy dancing with.",
+      name: "Horacio A",
+      avatar: "https://i.pravatar.cc/150?img=8",
+    },
+    {
+      quote:"I can’t rate BE enough, it’s the perfect end and start to my week. You can turn up alone and always see smiling welcoming dancers who have become my close friends over the years. You always feel welcome, safe and included! Social dancing in London wouldn’t be the same without it. Roll on the summer ☀️🕺💃",
+      name: "Chantal ccj",
+      avatar: "https://i.pravatar.cc/150?img=9",
     },
   ];
 
     return(
-        <section className="bg-black py-20 px-6 text-white">
-          <h2 className="text-3xl font-bold text-purple-200 text-center mb-12">What People Say</h2>
+        <section className="bg-blue-50 py-20 px-6 text-white">
+          <h2 className="text-3xl font-bold text-gray-800 text-center mb-12">What People Say</h2>
           <div className="relative">
             <div ref={ref} className="keen-slider">
               {testimonials.map((t, i) => (
@@ -88,6 +103,7 @@ export default function TestimonialCarousel() {
                 </div>
               </>
             )}
+
         </section>
    
     )

@@ -1,3 +1,4 @@
+
 export default function FAQS () {
     const faqs = [
         {
@@ -9,8 +10,18 @@ export default function FAQS () {
           a: "Absolutely! We offer classes for all levels and a super welcoming environment.",
         },
         {
-          q: "How can I get involved?",
-          a: "Click 'Get Involved' to volunteer or teach with us!",
+          q: "What about security?",
+          a: `Bachata Exchange is run in an outdoor space in the center of London, keep that in mind.
+              We provide a space for people to leave their belongings but we do not recommend leaving them as if it was a cloackroom.
+              Our best advice is to avoid bringin expensive items or valuables.
+              The space has security protecting the area and will help in case of emergencies, but each individual is ultimately responsible for their belongings.`,
+        },
+        {
+          q: "How can I support the movement?",
+          a: `You can donate to the teachers after you have taken the class,
+              is the best way to show them support for giving access to so many people to learn and connect through their talent.
+              Alternatively you can also support the movement by joining the GoFundMe campaign
+              clicking on the following link .`,
         },
       ]
 
@@ -24,6 +35,9 @@ export default function FAQS () {
                         <p className="text-gray-200">{item.a}</p>
                     </div>
                 ))}
+                <a href="https://www.gofundme.com/f/btvyd-bachata-exchange-community-project" target="_blank">
+                    <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded mt-8">Support the movement</button>
+                </a>
             </div>
         </section>
     )

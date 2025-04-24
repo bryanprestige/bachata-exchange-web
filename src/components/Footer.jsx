@@ -11,7 +11,7 @@ export default function Footer() {
           </div>
 
           {/* Socials */}
-          <div className="flex justify-center md:justify-end items-center gap-6 text-2xl">
+          <div className="flex justify-center md:justify-end items-center gap-6 text-2xl mr-20">
             <a href="https://www.instagram.com/bachata.exchange/" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-white">
               <FaInstagram />
             </a>

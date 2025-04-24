@@ -3,7 +3,8 @@ import HeroSection from './HeroSection';
 import AboutSection from './AboutSection';
 import EventCarousel from './EventCarousel';
 import TestimonialCarousel from './TestimonialCarousel';
-import Sponsors from './sponsors';
+import Sponsors from './Sponsors';
+import Collaborators from './Collaborators';
 import EventFacts from './EventFacts';
 import Footer from './Footer';
 import ScrollToTopButton from './ScrollToTopButton';
@@ -15,7 +16,6 @@ export default function HomePage() {
         <HeroSection></HeroSection>
       {/* About Section */}
       <AboutSection></AboutSection>
-      
       {/* Events Preview */}
       <EventCarousel></EventCarousel>
       {/* Testimonial Section */}
@@ -25,7 +25,10 @@ export default function HomePage() {
       {/* Call to Action */}
       <GetInvolved></GetInvolved>
       {/* Sponsosrs */}
-      <Sponsors></Sponsors>
+      <div className='flex flex-row gap-4 bg-blue-50 items-center justify-center'> 
+        <Sponsors></Sponsors>
+        <Collaborators></Collaborators>
+      </div>
       {/* Footer */}
       <Footer></Footer>
       <ScrollToTopButton></ScrollToTopButton>

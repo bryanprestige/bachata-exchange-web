@@ -3,3 +3,8 @@
     margin: 0 auto;
     text-align: center;
   }
+
+.aspect-video {
+  width:350px;
+  height: 470px;
+}

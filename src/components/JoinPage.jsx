@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import TeacherForm from './TeacherForm.jsx';
 import VolunteerForm from './VolunteerForm.jsx';
+import Footer from './Footer.jsx';
 
 export default function JoinPage() {
   const [selection, setSelection] = useState(null);
@@ -44,6 +45,7 @@ export default function JoinPage() {
           {selection === 'teacher' ? <TeacherForm /> : <VolunteerForm />}
         </div>
       )}
+      {selection && <Footer />}
     </div>
   );
 }

@@ -1,7 +1,9 @@
 import { collection,addDoc ,getDocs, onSnapshot } from "firebase/firestore";
-import { db } from "../firebaseConfig.js" 
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { db,storage } from "../firebaseConfig.js" 
 import { useState,useEffect } from 'react';
-//import pastEventsData from "../api/pastEvents2025.json";
+
+import pastEventsData from "../api/pastEvents2025.json";
 
 export default function AdminDashboard() {
 
@@ -9,6 +11,7 @@ export default function AdminDashboard() {
   console.log(ADMIN_PASS)
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
+  const [flyerFile, setFlyerFile] = useState(null);
 
   // Estados para eventos futuros y pasados
   const [upcomingEvents, setUpcomingEvents] = useState([]);
@@ -36,6 +39,39 @@ export default function AdminDashboard() {
     teachers: '',
     instagramEmbed: '',
   });
+
+  const handleAddUpcomingWithImage = async (e) => {
+    e.preventDefault();
+    if (!flyerFile) {
+      alert('Please select a flyer image to upload');
+      return;
+    }
+  
+    try {
+      // Crear una referencia para la imagen en Firebase Storage
+      const storageRef = ref(storage, `flyers/${flyerFile.name}`);
+      
+      // Subir el archivo
+      await uploadBytes(storageRef, flyerFile);
+      
+      // Obtener la URL pública de la imagen
+      const downloadURL = await getDownloadURL(storageRef);
+      
+      // Crear el evento con la URL de la imagen
+      const newEvent = { ...ueForm, flyerUrl: downloadURL };
+  
+      // Guardar el evento en Firestore
+      await addDoc(collection(db, "upcomingEvents"), newEvent);
+      alert('Upcoming event added successfully!');
+      
+      // Limpiar el formulario
+      setUeForm({ title: '', date: '', type: 'class', teachers: '', flyerUrl: '' });
+      setFlyerFile(null); // Limpiar el archivo después de subirlo
+    } catch (error) {
+      console.error("Error adding upcoming event with image: ", error);
+      alert('There was an error uploading the event with the image.');
+    }
+  };
 
   useEffect(() => {
     const fetchPastEvents = async () => {
@@ -76,6 +112,13 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFlyerFile(file);
+    }
+  };
+
   if (!authenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black text-white p-6">
@@ -102,32 +145,49 @@ export default function AdminDashboard() {
 
       {/* Upcoming Events Form */}
       <section className="bg-gray-800 p-6 rounded-xl shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">Add Upcoming Event</h2>
-        <form onSubmit={handleAddUpcoming} className="grid gap-4 md:grid-cols-2">
-          {['title','date','teachers','flyerUrl'].map(field => (
-            <input
-              key={field}
-              type={field==='date' ? 'date' : 'text'}
-              placeholder={field === 'flyerUrl' ? 'Flyer Image URL' : field.charAt(0).toUpperCase() + field.slice(1)}
-              className="input"
-              value={ueForm[field]}
-              onChange={e => setUeForm({...ueForm, [field]: e.target.value})}
-              required
-            />
-          ))}
-          <select
-            className="input"
-            value={ueForm.type}
-            onChange={e => setUeForm({...ueForm, type: e.target.value})}
-          >
-            <option value="class">Class</option>
-            <option value="social">Social</option>
-          </select>
-          <button type="submit" className="bg-yellow-500 text-black py-2 rounded hover:bg-yellow-400">
-            Add Upcoming
-          </button>
-        </form>
-      </section>
+        <h2 className="text-2xl font-semibold mb-4">Add Upcoming Event with Image</h2>
+        <form onSubmit={handleAddUpcomingWithImage} className="grid gap-4 md:grid-cols-2">
+            {['title', 'date', 'teachers'].map(field => (
+                <input
+                    key={field}
+                    type={field === 'date' ? 'date' : 'text'}
+                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                    className="input"
+                    value={ueForm[field]}
+                    onChange={e => setUeForm({ ...ueForm, [field]: e.target.value })}
+                    required
+                />
+                ))}
+                <select
+                className="@apply p-3 rounded bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                value={ueForm.type}
+                onChange={e => setUeForm({ ...ueForm, type: e.target.value })}
+                >
+                <option value="class Level" disabled>Class Level</option>
+                <option value="Beginners">Beginners</option>
+                <option value="Improvers">Improvers</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Footwork">Footwork</option>
+                <option value="Special Concept">Special Concept</option>
+                </select>
+
+                {/* Campo para seleccionar el archivo de imagen */}
+                <input
+                type="file"
+                accept="image/*"
+                className="input"
+                onChange={handleFileChange}
+                required
+                />
+                
+                <button
+                type="submit"
+                className="bg-yellow-500 text-black py-2 rounded hover:bg-yellow-400"
+                >
+                Add Upcoming Event with Image
+                </button>
+            </form>
+        </section>
 
       {/* Past Events Form */}
       <section className="bg-gray-800 p-6 rounded-xl shadow-md">

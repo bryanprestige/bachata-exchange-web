@@ -54,19 +54,6 @@ export default function EventCarousel() {
         </div>
         {loaded && instanceRef.current && (
           <>
-            {/* Flechas */}
-            {/* <button
-              onClick={() => instanceRef.current?.prev()}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-white text-black rounded-full p-2 hover:bg-purple-200 transition"
-            >
-              ←
-            </button>
-            <button
-              onClick={() => instanceRef.current?.next()}
-              className="absolute right-1 top-1/2 -translate-y-1/2 bg-white text-black rounded-full p-2 hover:bg-purple-200 transition"
-            >
-              →
-            </button> */}
             {/* Dots */}
             <div className="flex justify-center mt-6 gap-2">
               {events.map((_, i) => (
@@ -83,5 +70,4 @@ export default function EventCarousel() {
         )}
       </section>
     )
-
 }

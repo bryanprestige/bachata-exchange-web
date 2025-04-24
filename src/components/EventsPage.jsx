@@ -4,7 +4,6 @@ import flyer1 from "../assets/flyer1.png"
 import flyer2 from "../assets/flyer2.png"
 import flyer3 from "../assets/flyer3.png"
 import Footer from "./Footer";
-import pastEventData2025 from "../api/pastEvents2025.json"  with { type:"json"}
 import pastEventData2024 from "../api/pastEvents2024.json"  with { type:"json"}
 
 import { useEffect, useState } from 'react';
@@ -66,18 +65,18 @@ export default function EventsPage() {
                     Slide to the right to find more highlights from BE in cronological order
                 </p>
             </section>
-            <PastEventCarousel
+            {/* <PastEventCarousel
                 events={pastEvents}
-            />
+            /> */}
             <section className="bg-gray-800 text-white py-12 px-6 text-center">
                 <h2 className="text-3xl font-bold text-yellow-500 mb-4">Events 2024</h2>
                 <p className="max-w-3xl mx-auto text-white">
                     Slide to the right to find more highlights from BE in cronological order
                 </p>
             </section>
-            <PastEventCarousel
+            {/* <PastEventCarousel
               events={pastEventData2024}
-            />
+            /> */}
             <Footer />
        </>
     );

@@ -6,7 +6,33 @@ import flyer3 from "../assets/flyer3.png"
 import Footer from "./Footer";
 import pastEventData2025 from "../api/pastEvents2025.json"  with { type:"json"}
 import pastEventData2024 from "../api/pastEvents2024.json"  with { type:"json"}
+
+import { useEffect, useState } from 'react';
+import { db } from "../firebaseConfig.js";
+import { collection, onSnapshot,getDocs } from 'firebase/firestore';
+
 export default function EventsPage() {
+
+    const [pastEvents, setPastEvents] = useState([]);
+
+    useEffect(() => {
+        const fetchPastEvents = async () => {
+          const querySnapshot = await getDocs(collection(db, "pastEvents"));
+          const events = querySnapshot.docs.map(doc => doc.data()); // Extraemos los datos
+          setPastEvents(events); // Guardamos los datos en el estado
+        };
+      
+        fetchPastEvents();
+      }, []);
+
+    useEffect(() => {
+        const unsubscribe = onSnapshot(collection(db, "pastEvents"), snapshot => {
+          const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setPastEvents(events);
+        });
+    
+        return () => unsubscribe();
+      }, []);
 
     const teachers = [
         { name: "Dren", level: "Beginners", image: flyer1 },
@@ -41,7 +67,7 @@ export default function EventsPage() {
                 </p>
             </section>
             <PastEventCarousel
-                events={pastEventData2025}
+                events={pastEvents}
             />
             <section className="bg-gray-800 text-white py-12 px-6 text-center">
                 <h2 className="text-3xl font-bold text-yellow-500 mb-4">Events 2024</h2>

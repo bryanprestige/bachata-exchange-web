@@ -1,6 +1,10 @@
-import { useState } from 'react';
+import { collection,addDoc ,getDocs, onSnapshot } from "firebase/firestore";
+import { db } from "../firebaseConfig.js" 
+import { useState,useEffect } from 'react';
+//import pastEventsData from "../api/pastEvents2025.json";
 
 export default function AdminDashboard() {
+
   const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS;
   console.log(ADMIN_PASS)
   const [password, setPassword] = useState('');
@@ -9,6 +13,14 @@ export default function AdminDashboard() {
   // Estados para eventos futuros y pasados
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [pastEvents, setPastEvents] = useState([]);
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "pastEvents"), snapshot => {
+      const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setPastEvents(events);
+    });
+  
+    return () => unsubscribe(); // Limpiar suscripción en desmontaje
+  }, []);
 
   // Formularios
   const [ueForm, setUeForm] = useState({
@@ -25,6 +37,20 @@ export default function AdminDashboard() {
     instagramEmbed: '',
   });
 
+  useEffect(() => {
+    const fetchPastEvents = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "pastEvents"));
+        const events = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setPastEvents(events);
+      } catch (error) {
+        console.error("Error loading past events: ", error);
+      }
+    };
+  
+    fetchPastEvents();
+  }, []);
+
   const handleLogin = e => {
     e.preventDefault();
     if (password === ADMIN_PASS) setAuthenticated(true);
@@ -37,10 +63,17 @@ export default function AdminDashboard() {
     setUeForm({ title: '', date: '', type: 'class', teachers: '', flyerUrl: '' });
   };
 
-  const handleAddPast = e => {
+  const handleAddPast = async e => {
     e.preventDefault();
-    setPastEvents([...pastEvents, { ...peForm }]);
-    setPeForm({ title: '', date: '', teachers: '', youtubeEmbed: '' });
+  
+    try {
+      await addDoc(collection(db, "pastEvents"), peForm);
+      alert("Past event added!");
+      setPeForm({ title: '', date: '', teachers: '', instagramEmbed: '' });
+    } catch (error) {
+      console.error("Error adding past event: ", error);
+      alert("There was an error saving the event.");
+    }
   };
 
   if (!authenticated) {

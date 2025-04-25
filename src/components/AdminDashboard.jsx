@@ -11,6 +11,7 @@ export default function AdminDashboard() {
   const [authenticated, setAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null); 
+  const [cover,setCover] = useState(null);
 
   const [ueForm, setUeForm] = useState({
     names: '',
@@ -21,7 +22,7 @@ export default function AdminDashboard() {
     title: '',
     date: '',
     teachers: '',
-    instagramEmbed: '',
+    instagramCover: '',
   });
 
   const [upcomingEvents, setUpcomingEvents] = useState([]);
@@ -34,9 +35,51 @@ export default function AdminDashboard() {
     else alert('Wrong password');
   };
 
+  const handleCoverChange = (e) => {
+    setCover(e.target.files[0]);
+  };
+
   const handleImageChange = (e) => {
     setImage(e.target.files[0]);
   };
+
+  const handleAddPastEvent = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    let coverUrl = "";
+    if (cover) {
+      const data = new FormData();
+      data.append("file", cover);
+      data.append("upload_preset", "instagram-cover");
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        method: "POST",
+        body: data,
+      });
+
+      const file = await res.json();
+
+      if (!file.secure_url) {
+        alert("Image upload failed. Please check your Cloudinary config.");
+        setLoading(false);
+        return;
+      }    
+
+      coverUrl = file.secure_url;
+    }
+
+    await addDoc(collection(db, "pastEvents"), {
+      title: peForm.title,
+      date: peForm.date,
+      teachers: peForm.teachers,
+      instagramCover: coverUrl,
+    });
+
+    alert("Past event added!");
+    setLoading(false);
+    setPeForm({ title: '', date: '', teachers: '', instagramCover: '' });
+    setCover(null);
+  }
 
   const handleAddToStaging = async (e) => {
     e.preventDefault();
@@ -93,18 +136,6 @@ export default function AdminDashboard() {
     setStagingTeachers([]);
   };
 
-  const handleAddPast = async e => {
-    e.preventDefault();
-
-    try {
-      await addDoc(collection(db, "pastEvents"), peForm);
-      alert("Past event added!");
-      setPeForm({ title: '', date: '', teachers: '', instagramEmbed: '' });
-    } catch (error) {
-      console.error("Error adding past event: ", error);
-      alert("There was an error saving the event.");
-    }
-  };
 
   useEffect(() => {
     const unsubPast = onSnapshot(collection(db, "pastEvents"), snapshot => {
@@ -133,7 +164,6 @@ export default function AdminDashboard() {
         console.error("Error loading past events: ", error);
       }
     };
-
     fetchPastEvents();
   }, []);
 
@@ -188,7 +218,6 @@ export default function AdminDashboard() {
               <option value="Footwork">Footwork</option>
               <option value="Special Concept">Special Concept</option>
             </select>
-
             <input
               type="file"
               accept="image/*"
@@ -220,7 +249,7 @@ export default function AdminDashboard() {
       {/* Past Events Form */}
       <section className="bg-gray-800 p-6 rounded-xl shadow-md">
         <h2 className="text-2xl font-semibold mb-4">Add Past Event Video</h2>
-        <form onSubmit={handleAddPast} className="grid gap-4 md:grid-cols-2">
+        <form onSubmit={handleAddPastEvent} className="grid gap-4 md:grid-cols-2">
           {['title','date','teachers'].map(field => (
             <input
               key={field}
@@ -233,13 +262,12 @@ export default function AdminDashboard() {
             />
           ))}
           <input
-            type="text"
-            placeholder="Instagram Embed URL"
-            className="input col-span-full"
-            value={peForm.instagramEmbed}
-            onChange={e => setPeForm({...peForm, instagramEmbed: e.target.value})}
-            required
-          />
+              type="file"
+              accept="image/*"
+              className="input"
+              onChange={handleCoverChange}
+              required
+            />
           <button type="submit" className="bg-purple-600 py-2 rounded hover:bg-purple-700 col-span-full">
             Add Past Event
           </button>

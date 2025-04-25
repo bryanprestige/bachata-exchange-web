@@ -1,6 +1,6 @@
-import { collection,addDoc ,getDocs, onSnapshot } from "firebase/firestore";
-import { db } from "../firebaseConfig.js" 
-import { useState,useEffect } from 'react';
+import { collection, addDoc, getDocs, onSnapshot, writeBatch, doc } from "firebase/firestore";
+import { db } from "../firebaseConfig.js"
+import { useState, useEffect } from 'react';
 
 export default function AdminDashboard() {
 
@@ -12,7 +12,6 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [image, setImage] = useState(null); 
 
- // Formularios
   const [ueForm, setUeForm] = useState({
     names: '',
     classLevel: '',
@@ -27,6 +26,7 @@ export default function AdminDashboard() {
 
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [pastEvents, setPastEvents] = useState([]);
+  const [stagingTeachers, setStagingTeachers] = useState([]);
 
   const handleLogin = e => {
     e.preventDefault();
@@ -38,12 +38,11 @@ export default function AdminDashboard() {
     setImage(e.target.files[0]);
   };
 
-  const handleSubmit = async (e) => {
+  const handleAddToStaging = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     let imageUrl = "";
-
     if (image) {
       const data = new FormData();
       data.append("file", image);
@@ -65,20 +64,38 @@ export default function AdminDashboard() {
       imageUrl = file.secure_url;
     }
 
-    // Guardamos el evento en Firestore
-  await addDoc(collection(db, "teachers"), {
+    setStagingTeachers(prev => [...prev, {
       names: ueForm.names,
       classLevel: ueForm.classLevel,
       imageUrl,
+    }]);
+
+    setUeForm({ names: '', classLevel: '', imageUrl: '' });
+    setImage(null);
+    setLoading(false);
+  };
+
+  const handlePublishWeek = async () => {
+    const querySnapshot = await getDocs(collection(db, "teachers"));
+    const batch = writeBatch(db);
+
+    querySnapshot.forEach(doc => {
+      batch.delete(doc.ref);
     });
 
-    setLoading(false);
-    alert("Event saved!");
+    stagingTeachers.forEach(t => {
+      const docRef = doc(collection(db, "teachers"));
+      batch.set(docRef, t);
+    });
+
+    await batch.commit();
+    alert("Nueva semana publicada.");
+    setStagingTeachers([]);
   };
 
   const handleAddPast = async e => {
     e.preventDefault();
-  
+
     try {
       await addDoc(collection(db, "pastEvents"), peForm);
       alert("Past event added!");
@@ -116,10 +133,9 @@ export default function AdminDashboard() {
         console.error("Error loading past events: ", error);
       }
     };
-  
+
     fetchPastEvents();
   }, []);
-
 
   if (!authenticated) {
     return (
@@ -147,8 +163,8 @@ export default function AdminDashboard() {
 
       {/* Upcoming Events Form */}
       <section className="bg-gray-800 p-6 rounded-xl shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">Add Upcoming Event</h2>
-        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-1">
+        <h2 className="text-2xl font-semibold mb-4">Add Teachers to Staging</h2>
+        <form onSubmit={handleAddToStaging} className="grid gap-4 md:grid-cols-1">
             {['names'].map(field => (
                 <input
                     key={field}
@@ -159,37 +175,47 @@ export default function AdminDashboard() {
                     onChange={e => setUeForm({ ...ueForm, [field]: e.target.value })}
                     required
                 />
-                ))}
-                <select
-                className="@apply p-3 rounded bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                value={ueForm.classLevel}
-                onChange={e => setUeForm({ ...ueForm, classLevel: e.target.value })}
-                >
-                <option value="class Level" disabled selected>Class Level</option>
-                <option value="Beginners">Beginners</option>
-                <option value="Improvers">Improvers</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Footwork">Footwork</option>
-                <option value="Special Concept">Special Concept</option>
-                </select>
+            ))}
+            <select
+              className="p-3 rounded bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              value={ueForm.classLevel}
+              onChange={e => setUeForm({ ...ueForm, classLevel: e.target.value })}
+            >
+              <option value="" disabled>Class Level</option>
+              <option value="Beginners">Beginners</option>
+              <option value="Improvers">Improvers</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Footwork">Footwork</option>
+              <option value="Special Concept">Special Concept</option>
+            </select>
 
-                {/* Campo para seleccionar el archivo de imagen */}
-                <input
-                type="file"
-                accept="image/*"
-                className="input"
-                onChange={handleImageChange}
-                required
-                />
-                
-                <button
+            <input
+              type="file"
+              accept="image/*"
+              className="input"
+              onChange={handleImageChange}
+              required
+            />
+              <button
                 type="submit"
-                className="bg-yellow-500 text-black py-2 rounded hover:bg-yellow-400"
-                >
-                Add Upcoming Event with Image
-                </button>
-            </form>
-        </section>
+                className={`bg-yellow-500 text-black py-2 rounded hover:bg-yellow-400 ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+                disabled={loading}
+              >
+                {loading ? "Uploading..." : "Add Upcoming Event"}
+              </button>
+        </form>
+
+        <button
+          onClick={handlePublishWeek}
+          className="mt-4 w-full bg-green-500 py-2 rounded hover:bg-green-600"
+        >
+          📦 Publish New Week
+        </button>
+
+        <pre className="mt-4 bg-black p-4 rounded text-sm overflow-x-auto">
+          {JSON.stringify(stagingTeachers, null, 2)}
+        </pre>
+      </section>
 
       {/* Past Events Form */}
       <section className="bg-gray-800 p-6 rounded-xl shadow-md">

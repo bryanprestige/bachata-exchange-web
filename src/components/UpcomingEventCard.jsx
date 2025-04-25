@@ -1,13 +1,7 @@
-import { motion } from "framer-motion";
 
 export default function UpcomingEventCard({teachers }) {
     return (
-        <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        >
+        
             <div className="grid grid-cols-1 sm:grid-cols-3 my-4">
               {teachers.map((t, i) => (
                   <div key={i} className="flex flex-col items-center gap-4 bg-gray-800 p-3 rounded-xl">
@@ -23,7 +17,6 @@ export default function UpcomingEventCard({teachers }) {
                   </div>
               ))}
             </div> 
-      </motion.div>
     );
   }
   

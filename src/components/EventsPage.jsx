@@ -1,5 +1,7 @@
 import UpcomingEventCard from "./UpcomingEventCard";
 import PastEventCarousel from "./PastEventCarousel";
+import { motion } from "framer-motion";
+
 //import flyer1 from "../assets/flyer1.png"
 //import flyer2 from "../assets/flyer2.png"
 //import flyer3 from "../assets/flyer3.png"
@@ -61,15 +63,21 @@ export default function EventsPage() {
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, justo nec sagittis efficitur, sem magna faucibus lacus, nec fermentum justo libero non lorem.
                 </p>
             </section>
-            <section className="bg-gray-800 rounded-2xl shadow-lg p-6 text-white max-w-4xl mx-auto mb-8">
-                <h3 className="text-yellow-400 text-xl font-semibold mb-2">Classes start at 5pm</h3>
-                <p className="text-sm text-white mb-2">{new Date("2025-04-27").toDateString()} | 12 Primrose Street, London,EC2A 2EG</p>
-            <UpcomingEventCard
-                teachers={teachers}
-            />
-            <p className="text-lg italic text-white">Open level warm-up included</p>
-
-            </section>
+            <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+                <section className="bg-gray-800 rounded-2xl shadow-lg p-6 text-white max-w-4xl mx-auto mb-8">
+                    <h3 className="text-yellow-400 text-xl font-semibold mb-2">Classes start at 5pm</h3>
+                    <p className="text-sm text-white mb-2">{new Date("2025-04-27").toDateString()} | 12 Primrose Street, London,EC2A 2EG</p>
+                    <UpcomingEventCard
+                    teachers={teachers}
+                />
+                <p className="text-lg italic text-white">Open level warm-up included</p>
+                </section>
+            </motion.div>
             <section className="bg-gray-800 text-white py-12 px-6 text-center">
                 <h2 className="text-3xl font-bold text-yellow-500 mb-4">Events 2025</h2>
                 <p className="max-w-3xl mx-auto text-white">

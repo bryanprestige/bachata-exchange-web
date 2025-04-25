@@ -1,37 +1,22 @@
 import { collection,addDoc ,getDocs, onSnapshot } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db,storage } from "../firebaseConfig.js" 
+import { db } from "../firebaseConfig.js" 
 import { useState,useEffect } from 'react';
-
-import pastEventsData from "../api/pastEvents2025.json";
 
 export default function AdminDashboard() {
 
+  const CLOUD_NAME = import.meta.env.VITE_CLOUD_NAME;
   const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS;
-  console.log(ADMIN_PASS)
+
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
-  const [flyerFile, setFlyerFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState(null); 
 
-  // Estados para eventos futuros y pasados
-  const [upcomingEvents, setUpcomingEvents] = useState([]);
-  const [pastEvents, setPastEvents] = useState([]);
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "pastEvents"), snapshot => {
-      const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setPastEvents(events);
-    });
-  
-    return () => unsubscribe(); // Limpiar suscripción en desmontaje
-  }, []);
-
-  // Formularios
+ // Formularios
   const [ueForm, setUeForm] = useState({
-    title: '',
-    date: '',
-    type: 'class',
-    teachers: '',
-    flyerUrl: '',
+    names: '',
+    classLevel: '',
+    imageUrl: '',
   });
   const [peForm, setPeForm] = useState({
     title: '',
@@ -40,52 +25,8 @@ export default function AdminDashboard() {
     instagramEmbed: '',
   });
 
-  const handleAddUpcomingWithImage = async (e) => {
-    e.preventDefault();
-    if (!flyerFile) {
-      alert('Please select a flyer image to upload');
-      return;
-    }
-  
-    try {
-      // Crear una referencia para la imagen en Firebase Storage
-      const storageRef = ref(storage, `flyers/${flyerFile.name}`);
-      
-      // Subir el archivo
-      await uploadBytes(storageRef, flyerFile);
-      
-      // Obtener la URL pública de la imagen
-      const downloadURL = await getDownloadURL(storageRef);
-      
-      // Crear el evento con la URL de la imagen
-      const newEvent = { ...ueForm, flyerUrl: downloadURL };
-  
-      // Guardar el evento en Firestore
-      await addDoc(collection(db, "upcomingEvents"), newEvent);
-      alert('Upcoming event added successfully!');
-      
-      // Limpiar el formulario
-      setUeForm({ title: '', date: '', type: 'class', teachers: '', flyerUrl: '' });
-      setFlyerFile(null); // Limpiar el archivo después de subirlo
-    } catch (error) {
-      console.error("Error adding upcoming event with image: ", error);
-      alert('There was an error uploading the event with the image.');
-    }
-  };
-
-  useEffect(() => {
-    const fetchPastEvents = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "pastEvents"));
-        const events = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setPastEvents(events);
-      } catch (error) {
-        console.error("Error loading past events: ", error);
-      }
-    };
-  
-    fetchPastEvents();
-  }, []);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [pastEvents, setPastEvents] = useState([]);
 
   const handleLogin = e => {
     e.preventDefault();
@@ -93,10 +34,46 @@ export default function AdminDashboard() {
     else alert('Wrong password');
   };
 
-  const handleAddUpcoming = e => {
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setUpcomingEvents([...upcomingEvents, { ...ueForm }]);
-    setUeForm({ title: '', date: '', type: 'class', teachers: '', flyerUrl: '' });
+    setLoading(true);
+
+    let imageUrl = "";
+
+    if (image) {
+      const data = new FormData();
+      data.append("file", image);
+      data.append("upload_preset", "bachata-flyers");
+
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+        method: "POST",
+        body: data,
+      });
+
+      const file = await res.json();
+
+      if (!file.secure_url) {
+        alert("Image upload failed. Please check your Cloudinary config.");
+        setLoading(false);
+        return;
+      }    
+
+      imageUrl = file.secure_url;
+    }
+
+    // Guardamos el evento en Firestore
+  await addDoc(collection(db, "teachers"), {
+      names: ueForm.names,
+      classLevel: ueForm.classLevel,
+      imageUrl,
+    });
+
+    setLoading(false);
+    alert("Event saved!");
   };
 
   const handleAddPast = async e => {
@@ -112,12 +89,37 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFlyerFile(file);
-    }
-  };
+  useEffect(() => {
+    const unsubPast = onSnapshot(collection(db, "pastEvents"), snapshot => {
+      const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setPastEvents(events);
+    });
+
+    const unsubTeachers = onSnapshot(collection(db, "teachers"), snapshot => {
+      const events = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setUpcomingEvents(events);
+    });
+
+    return () => {
+      unsubPast();
+      unsubTeachers();
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchPastEvents = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "pastEvents"));
+        const events = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setPastEvents(events);
+      } catch (error) {
+        console.error("Error loading past events: ", error);
+      }
+    };
+  
+    fetchPastEvents();
+  }, []);
+
 
   if (!authenticated) {
     return (
@@ -145,12 +147,12 @@ export default function AdminDashboard() {
 
       {/* Upcoming Events Form */}
       <section className="bg-gray-800 p-6 rounded-xl shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">Add Upcoming Event with Image</h2>
-        <form onSubmit={handleAddUpcomingWithImage} className="grid gap-4 md:grid-cols-2">
-            {['title', 'date', 'teachers'].map(field => (
+        <h2 className="text-2xl font-semibold mb-4">Add Upcoming Event</h2>
+        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-1">
+            {['names'].map(field => (
                 <input
                     key={field}
-                    type={field === 'date' ? 'date' : 'text'}
+                    type='text'
                     placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
                     className="input"
                     value={ueForm[field]}
@@ -160,10 +162,10 @@ export default function AdminDashboard() {
                 ))}
                 <select
                 className="@apply p-3 rounded bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                value={ueForm.type}
-                onChange={e => setUeForm({ ...ueForm, type: e.target.value })}
+                value={ueForm.classLevel}
+                onChange={e => setUeForm({ ...ueForm, classLevel: e.target.value })}
                 >
-                <option value="class Level" disabled>Class Level</option>
+                <option value="class Level" disabled selected>Class Level</option>
                 <option value="Beginners">Beginners</option>
                 <option value="Improvers">Improvers</option>
                 <option value="Intermediate">Intermediate</option>
@@ -176,7 +178,7 @@ export default function AdminDashboard() {
                 type="file"
                 accept="image/*"
                 className="input"
-                onChange={handleFileChange}
+                onChange={handleImageChange}
                 required
                 />
                 

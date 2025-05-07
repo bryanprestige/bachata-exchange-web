@@ -3,6 +3,7 @@ import { db } from "../../firebaseConfig.js"
 import { useState, useEffect } from 'react';
 import UpcomingEventsForm from "./UpcomingEventsForm.jsx";
 import PastEventsForm from "./PastEventsForm.jsx";
+import FeaturedEventsForm from "./FeaturedEventsForm.jsx";
 
 export default function AdminDashboard() {
   const ADMIN_PASS = import.meta.env.VITE_ADMIN_PASS;
@@ -19,7 +20,6 @@ export default function AdminDashboard() {
     if (password === ADMIN_PASS) setAuthenticated(true);
     else alert('Wrong password');
   };
-
 
   useEffect(() => {
     const unsubPast = onSnapshot(collection(db, "pastEvents"), snapshot => {
@@ -73,11 +73,13 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6 space-y-12">
-      <h1 className="text-3xl font-bold text-center">🎛️ Admin Dashboard</h1>
+      <h1 className="text-3xl font-bold text-center text-white mt-25">🎛️ Admin Dashboard</h1>
       {/* Upcoming Events Form */}
       <UpcomingEventsForm></UpcomingEventsForm>
       {/* Past Events Form */}
       <PastEventsForm></PastEventsForm>
+      {/* Featured Events Form */}
+      <FeaturedEventsForm></FeaturedEventsForm>
       {/* Data Preview */}
       <section className="bg-gray-800 p-6 rounded-xl shadow-md">
         <h2 className="text-2xl font-semibold mb-4">Data Preview</h2>

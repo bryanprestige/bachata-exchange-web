@@ -1,45 +1,50 @@
 import {useKeenSlider} from 'keen-slider/react'
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebaseConfig.js"
 import EventCard from './EventCard.jsx';
 import { KeenAutoplayWithDots } from "../../lib/keenAutoplayWithDots.js";
-import { useState, useRef } from "react";
-import bachataHearthImg from '../../assets/bachata-hearth.png';
-import latinNotionImg from '../../assets/latin-notion.png';
-import bachazoukImg from '../../assets/bachazouk.png';
-import bachataBattleImg from '../../assets/bachata-battle.png';
-import springfestivalImg from '../../assets/spring-festival.png';
+import { useState, useRef, useEffect } from "react";
 import { RiDiscountPercentFill } from "react-icons/ri";
 
 export default function EventCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [loaded, setLoaded] = useState(false);
   const sliderRef = useRef(null);
+  const [events, setEvents] = useState([]);
+  
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, "featuredEvents"), (snapshot) => {
+      const data = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setEvents(data);
+    });
+
+    return () => unsub();
+  }, []);
+
+  const keenPlugin = KeenAutoplayWithDots(sliderRef, setCurrentSlide)
 
   const [ref, instanceRef] = useKeenSlider(
-    {
-      loop: true,
-      slides: {
-        perView: 1,
-        spacing: 15,
-      },
-      breakpoints: {
-        "(min-width: 768px)": {
-          slides: { perView: 2, spacing: 10 },
-        },
-        "(min-width: 1024px)": {
-          slides: { perView: 3, spacing: 10 },
-        },
-      },
-    },
-    [KeenAutoplayWithDots(sliderRef, setCurrentSlide, setLoaded)]
+    events.length > 0
+      ? {
+          loop: true,
+          slides: {
+            perView: 1,
+            spacing: 15,
+          },
+          breakpoints: {
+            "(min-width: 768px)": {
+              slides: { perView: 2, spacing: 10 },
+            },
+            "(min-width: 1024px)": {
+              slides: { perView: 3, spacing: 10 },
+            },
+          },
+        }
+      : null, 
+    events.length > 0 ? [keenPlugin] : []
   );
-
-  const events = [
-    { image: bachataHearthImg, title: 'Bachata Hearth', date: '23 April 2025' },
-    { image: latinNotionImg, title: 'Latin Notion', date: '15th to 19th May 2025' },
-    { image: bachazoukImg, title: "BachazoUK Festival", date: "13th to 15th June 2025" },
-    { image: bachataBattleImg, title: "London Bachata Battle", date: "20th April 2025" },
-    { image: springfestivalImg, title: "Spring Festival SBK", date: "14th to 16th March 2025" }
-  ];
 
     return (
       <section className='bg-gray-800 py-12'>
@@ -48,30 +53,27 @@ export default function EventCarousel() {
           className='text-yellow-500 text-2xl inline ml-5'></RiDiscountPercentFill>
         </h1>
         <div className='relative'>
-          <div ref={ref} className="keen-slider">
+          <div ref={ref} className="keen-slider w-full min-h-[300px]">
             {events.map((event, i) => (
-              <div key={i} className="keen-slider__slide min-w-full">
+              <div key={i} className="keen-slider__slide">
                 <EventCard {...event} />
               </div>
             ))}
           </div>
         </div>
-        {loaded && instanceRef.current && (
-          <>
-            {/* Dots */}
-            <div className="flex justify-center mt-6 gap-2">
-              {events.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => instanceRef.current?.moveToIdx(i)}
-                  className={`h-2 w-2 rounded-full ${
-                    currentSlide === i ? "bg-yellow-500" : "bg-white"
-                  }`}
-                ></button>
-              ))}
-            </div>
-          </>
-        )}
+        {instanceRef.current && events.length > 1 && (
+          <div className="flex justify-center mt-6 gap-2">
+            {events.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => instanceRef.current?.moveToIdx(i)}
+                className={`h-2 w-2 rounded-full transition-colors duration-300 ${
+                  currentSlide === i ? "bg-yellow-500" : "bg-white"
+                }`}
+              ></button>
+            ))}
+          </div>
+      )}
       </section>
     )
 }

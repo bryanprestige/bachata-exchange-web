@@ -1,19 +1,31 @@
 import './App.css'
-import { Link,Routes,Route } from 'react-router-dom'
-import HomePage from './components/HomePage.jsx'
-import AboutPage from './components/AboutPage.jsx'
-import EventsPage from './components/EventsPage.jsx'
-import JoinPage from './components/JoinPage.jsx'
+import { useState,useEffect,lazy,Suspense } from 'react'
+import { Link,Routes,Route,useLocation } from 'react-router-dom'
+import HomePage from './components/HomePage/HomePage.jsx'
+import Loader from './components/Loader.jsx'
 import beLogo from './assets/bachata-exchange-logo.png'
 import { SiGofundme } from "react-icons/si";
-import { useState,useEffect } from 'react'
 import {scrollToTop} from './lib/Utils.js'
 import { motion, AnimatePresence } from 'framer-motion';
 
-import AdminDashboard from './components/AdminDashboard.jsx'
+const AboutPage = lazy(() => import('./components/AboutPage/AboutPage.jsx'));
+const EventsPage = lazy(() => import('./components/EventsPage/EventsPage.jsx'));
+const JoinPage = lazy(() => import('./components/JoinPage/JoinPage.jsx'));
+const AdminDashboard = lazy(() => import('./components/AdminDashboard/AdminDashboard.jsx'));
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const location = useLocation();
+
+  const getLoaderMessage = (pathname) => {
+    if (pathname.startsWith('/about')) return "Loading About Page...";
+    if (pathname.startsWith('/events')) return "Loading Events...";
+    if (pathname.startsWith('/join')) return "Loading Join Page...";
+    if (pathname.startsWith('/dashboard')) return "Loading Admin Panel...";
+    return "Loading...";
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,8 +38,10 @@ function App() {
 
   return (
     <>
-        <nav className={`py-4 fixed w-full z-50 transition-all duration-300 text-yellow-500 ${scrolled ? 'bg-gray-800 backdrop-blur shadow-lg' : 'bg-gray-800'}`}>
-          <div className="max-w-7xl mx-auto flex justify-between items-center">
+        <nav className={`py-4 fixed top-0 w-full z-50 transition-all duration-300 text-yellow-500 ${
+          scrolled ? 'bg-gray-800 backdrop-blur shadow-lg' : 'bg-gray-800'
+        }`}>
+          <div className="w-full mx-auto flex justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 ml-3" onClick={scrollToTop}>
             <img src={beLogo} alt="Bachata Exchange Logo" className="h-12 object-contain" />
@@ -48,7 +62,7 @@ function App() {
 
           {/* Mobile menu toggle */}
           <button
-            className="md:hidden text-yellow-400"
+            className="md:hidden text-yellow-400 mr-3"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
@@ -74,13 +88,15 @@ function App() {
         </AnimatePresence>
       </nav>
 
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/events" element={<EventsPage />} />
-        <Route path="/join" element={<JoinPage />} />
-        <Route path="/dashboard-8432access" element={<AdminDashboard />} />
-      </Routes>
+      <Suspense fallback={<Loader message={getLoaderMessage(location.pathname)} />}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/join" element={<JoinPage />} />
+          <Route path="/dashboard-8432access" element={<AdminDashboard />} />
+        </Routes>
+      </Suspense>
     </>
   )
 }

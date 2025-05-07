@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import TeacherForm from './TeacherForm.jsx';
-import VolunteerForm from './VolunteerForm.jsx';
-import Footer from './Footer.jsx';
+import { lazy,Suspense,useState } from 'react';
+
+const TeacherForm = lazy(() => import('./TeacherForm.jsx'));
+const VolunteerForm = lazy(() => import('./VolunteerForm.jsx'));
+const Footer = lazy(() => import('../Footer.jsx'));
 
 export default function JoinPage() {
   const [selection, setSelection] = useState(null);
@@ -34,18 +35,20 @@ export default function JoinPage() {
           </div>
         </div>
       )}
-
-      {/* Título visible cuando se elige una opción */}
       {selection && (
         <div className="max-w-3xl mx-auto mt-20">
           <h1 className="text-4xl font-bold text-yellow-500 text-center mb-10">
             {selection === 'teacher' ? 'Teach with Us' : 'Volunteer at Our Events'}
           </h1>
 
-          {selection === 'teacher' ? <TeacherForm /> : <VolunteerForm />}
+          <Suspense fallback={<div className="text-white text-center">Loading footer...</div>}>
+            {selection === 'teacher' ? <TeacherForm /> : <VolunteerForm />}
+          </Suspense>
         </div>
       )}
-      {selection && <Footer />}
+      <Suspense fallback={<div className="text-white text-center">Loading footer...</div>}>
+        {selection && <Footer />}
+      </Suspense>
     </div>
   );
 }

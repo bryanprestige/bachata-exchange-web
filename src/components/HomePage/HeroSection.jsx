@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import heroImage from '../assets/hero-image.png';
-import { scrollToTop } from '../lib/Utils';
+import heroImage from '../../assets/hero-image.jpg';
+import { scrollToTop } from '../../lib/Utils';
 export default function HeroSection() {
     return (
         <section

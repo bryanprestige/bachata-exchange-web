@@ -20,17 +20,19 @@ export default function PastEventCarousel({ events }) {
 
 
   return (
-    <div ref={sliderRef} className="keen-slider my-12">
-      {events.map((event, i) => (
+        <div
+          ref={sliderRef}
+          className="keen-slider my-12"
+          key={events.map(e => e.title).join("-")}
+        >
+        {events.map((event, i) => (
           <div key={i} className="keen-slider__slide bg-gray-900 p-4 rounded-xl text-white shadow-lg">
             <div className="aspect-video mb-4">
             <a href={event.instagramLink} target="_blank">
               <img
                 className="w-full h-full rounded-xl"
                 src={event.instagramCover}
-                title={event.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
+                alt={event.title}
               ></img>
             </a>
             </div>

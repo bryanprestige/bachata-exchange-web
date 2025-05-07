@@ -1,4 +1,4 @@
-import heroImage from '../assets/hero-image.png';
+import heroImage from '../../assets/hero-image.jpg';
 
 export default function PhotoGallery() {
     const photos = [

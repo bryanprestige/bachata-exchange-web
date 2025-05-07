@@ -3,7 +3,7 @@ import { FaInstagram, FaEnvelope } from 'react-icons/fa';
 export default function Footer() {
     return (
       <footer className="bg-gray-800 text-yellow-400 py-10 px-6 mt-20">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 text-center md:text-left">
+        <div className="mx-auto grid md:grid-cols-2 gap-8 text-center md:text-left">
           {/* Logo + copyright */}
           <div>
             <h3 className="text-xl font-bold text-yellow-500">Bachata Exchange</h3>

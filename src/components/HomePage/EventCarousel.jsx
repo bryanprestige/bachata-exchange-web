@@ -1,12 +1,13 @@
 import {useKeenSlider} from 'keen-slider/react'
-import EventCard from './EventCard';
-import { KeenAutoplayWithDots } from "../lib/keenAutoplayWithDots.js";
+import EventCard from './EventCard.jsx';
+import { KeenAutoplayWithDots } from "../../lib/keenAutoplayWithDots.js";
 import { useState, useRef } from "react";
-import bachataHearthImg from '../assets/bachata-hearth.png';
-import latinNotionImg from '../assets/latin-notion.png';
-import bachazoukImg from '../assets/bachazouk.png';
-import bachataBattleImg from '../assets/bachata-battle.png';
-import springfestivalImg from '../assets/spring-festival.png';
+import bachataHearthImg from '../../assets/bachata-hearth.png';
+import latinNotionImg from '../../assets/latin-notion.png';
+import bachazoukImg from '../../assets/bachazouk.png';
+import bachataBattleImg from '../../assets/bachata-battle.png';
+import springfestivalImg from '../../assets/spring-festival.png';
+import { RiDiscountPercentFill } from "react-icons/ri";
 
 export default function EventCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -43,6 +44,9 @@ export default function EventCarousel() {
     return (
       <section className='bg-gray-800 py-12'>
         <h1 className='text-yellow-500 text-2xl font-bold mb-4'>Featured Events</h1>
+        <h1 className='text-yellow-500 text-2xl font-bold mb-4'>Use code: BELONDON for 10% off on the events with the mark<RiDiscountPercentFill
+          className='text-yellow-500 text-2xl inline ml-5'></RiDiscountPercentFill>
+        </h1>
         <div className='relative'>
           <div ref={ref} className="keen-slider">
             {events.map((event, i) => (

@@ -1,6 +1,6 @@
 import { useKeenSlider } from "keen-slider/react";
 import Testimonial from "./Testimonial.jsx";
-import { KeenAutoplayWithDots } from "../lib/keenAutoplayWithDots.js";
+import { KeenAutoplayWithDots } from "../../lib/keenAutoplayWithDots.js";
 import { useState, useRef } from "react";
 import { FaTripadvisor } from "react-icons/fa";
 export default function TestimonialCarousel() {
@@ -75,20 +75,6 @@ export default function TestimonialCarousel() {
           </div>
           {loaded && instanceRef.current && (
               <>
-                {/* Flechas */}
-                {/* <button
-                  onClick={() => instanceRef.current?.prev()}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white text-black rounded-full p-2 hover:bg-purple-200 transition"
-                >
-                  ←
-                </button>
-                <button
-                  onClick={() => instanceRef.current?.next()}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white text-black rounded-full p-2 hover:bg-purple-200 transition"
-                >
-                  →
-                </button> */}
-
                 {/* Dots */}
                 <div className="flex justify-center mt-6 gap-2">
                   {testimonials.map((_, i) => (

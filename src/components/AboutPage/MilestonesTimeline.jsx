@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import heroImage from '../assets/hero-image.png';
+import heroImage from '../../assets/hero-image.jpg';
 
 const milestones = [
   {

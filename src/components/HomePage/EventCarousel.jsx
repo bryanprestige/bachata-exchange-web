@@ -49,8 +49,10 @@ export default function EventCarousel() {
     return (
       <section className='bg-gray-800 py-12'>
         <h1 className='text-yellow-500 text-2xl font-bold mb-4'>Featured Events</h1>
-        <h1 className='text-yellow-500 text-2xl font-bold mb-4'>Use code: BELONDON for 10% off on the events with the mark<RiDiscountPercentFill
-          className='text-yellow-500 text-2xl inline ml-5'></RiDiscountPercentFill>
+        <h1 className='text-yellow-500 text-2xl font-bold mb-4'>Use code: BELONDON when checking out for a nice discount on the events with the mark <span className="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                <RiDiscountPercentFill className="mr-2" />
+                Discount
+              </span>
         </h1>
         <div className='relative'>
           <div ref={ref} className="keen-slider w-full min-h-[300px]">

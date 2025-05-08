@@ -9,6 +9,7 @@ export default function FeaturedEventsForm() {
     dateRange: "",
     infoUrl: "",
     image: null,
+    discount: "false",
   });
 
   const [loading, setLoading] = useState(false);
@@ -37,10 +38,11 @@ export default function FeaturedEventsForm() {
         dateRange: formData.dateRange,
         infoUrl: formData.infoUrl,
         imageUrl: imageUrl,
+        discount: formData.discount,
       });
 
       alert("Event added successfully!");
-      setFormData({ title: "", dateRange: "", infoUrl: "", image: null });
+      setFormData({ title: "", dateRange: "", infoUrl: "", image: null, discount: "false" });
     } catch (error) {
       console.error("Error adding featured event:", error);
       alert("Failed to add event.");
@@ -79,6 +81,18 @@ export default function FeaturedEventsForm() {
           onChange={handleChange}
           className="input w-full"
           required
+        />
+        <label className="mr-3" >BELONDON Discount</label>
+        <input
+          type="checkbox"
+          name="discount"
+          checked={formData.discount === "true"}
+          onChange={(e) => {
+            setFormData((prev) => ({
+              ...prev,
+              discount: e.target.checked ? "true" : "false",
+            }));
+          }}
         />
         <input
           type="file"
